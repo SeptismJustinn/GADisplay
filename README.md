@@ -1,6 +1,7 @@
 # <a href="https://septismgadisplay.onrender.com" target="_blank">GADisplay</a>
 
 Full stack app to display class timings on a Samsung Galaxy Tablet A and to provide an administrative interface for laptops/computers to schedule events.
+[Using the linked prototype.](#Prototype)
 
 # Technologies used
 
@@ -46,7 +47,7 @@ Production WSGI server used for deployment. Chosen primarily for its compatabili
 
 ### <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>
 
-SQL database used to leverage on its nature to strictly constrain data, preventing invalid data from going into the wrong tables.
+SQL database used to leverage on its nature to strictly constrain data, preventing invalid data from going into the wrong tables. Hosted on Supabase.
 
 # General Approach
 
@@ -237,3 +238,7 @@ SEED_PW="password to check against when seeding users"
 6. Create tables via the .sql file included in the repo.
 7. Call upon the Course_Types, Days_Schedules, Roles and Rooms seed endpoints to prime the database.
 8. Use psql to assign your selected account admin/user role (role in the app, not role in the database) and begin exploring the app!
+
+# Prototype
+To play around with the prototype, log in as test@generalassemb.ly with password 'password'.
+As Supabase spins down after a period of inactivity and has to be manually activated, please feel free to contact me at ohhoehoe@gmail.com if you would like to test out the prototype!
