@@ -132,6 +132,7 @@ Full dependencies in requirements.txt, listed below are the main packages used.
 
 ## PostgreSQL
 
+Install "uuid-ossp" extension to allow PostgreSQL to generate UUIDs. This was done mostly to explore using PostgreSQL functions and can be disregarded if server is altered to provide the UUID values for users.
 - uuid-ossp <br /> `CREATE EXTENSION "uuid-ossp"`
 
 # User Stories
@@ -235,7 +236,7 @@ SEED_PW="password to check against when seeding users"
 ```
 
 5. Start the server via `flask run` (for development) or via a WSGI server.
-6. Create tables via the .sql file included in the repo.
+6. Tables should be automatically created, otherwise create tables via the .sql file included in the repo.
 7. Call upon the Course_Types, Days_Schedules, Roles and Rooms seed endpoints to prime the database.
 8. Use psql to assign your selected account admin/user role (role in the app, not role in the database) and begin exploring the app!
 
