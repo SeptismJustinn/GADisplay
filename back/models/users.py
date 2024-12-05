@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import UUID
 from models.db import db
 
@@ -5,7 +6,7 @@ from models.db import db
 class Users(db.Model):
     __tablename__ = 'Users'
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, server_default=db.FetchedValue(), nullable=False)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     hash = db.Column(db.String(255), nullable=False)
