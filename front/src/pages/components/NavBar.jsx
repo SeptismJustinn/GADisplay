@@ -9,16 +9,16 @@ function NavBar(props) {
 
   async function handleLogout() {
     try {
-      const refreshTkn = localStorage.getItem("GAref");
+      const refreshTkn = sessionStorage.getItem("GAref");
       if (refreshTkn) {
         const { ok, data } = await fetchData(
           "/auth/login",
-          localStorage.getItem("GAref"),
+          sessionStorage.getItem("GAref"),
           "DELETE"
         );
         if (ok) {
-          localStorage.removeItem("GAref");
-          localStorage.removeItem("GAacc");
+          sessionStorage.removeItem("GAref");
+          sessionStorage.removeItem("GAacc");
           alert("Logging out");
         } else {
           throw new Error(data);

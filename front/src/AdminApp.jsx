@@ -31,7 +31,7 @@ function AdminApp() {
       // If access token still has more than 15 minutes to expiry, do nothing
       return;
     }
-    const refresh = localStorage.getItem("GAref");
+    const refresh = sessionStorage.getItem("GAref");
     if (!refresh) {
       return;
     }

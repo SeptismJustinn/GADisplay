@@ -30,8 +30,8 @@ function AdminLoginPage(props) {
           navigate("/admin/dashboard");
           return alert("Account pending approval");
         }
-        localStorage.setItem("GAacc", data.access);
-        localStorage.setItem("GAref", data.refresh);
+        sessionStorage.setItem("GAacc", data.access);
+        sessionStorage.setItem("GAref", data.refresh);
         props.setAccessToken(data.access);
         const decoded = jwtDecode(data.access);
         props.setClaims(decoded);
