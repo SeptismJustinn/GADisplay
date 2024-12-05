@@ -43,6 +43,9 @@ mm.init_app(app)
 jwt = JWTManager(app)
 CORS(app)
 
+with app.app_context():
+    db.create_all()
+
 
 # Setup automatic user loading via JWT
 @jwt.user_identity_loader
