@@ -15,13 +15,31 @@ from models.adhocs import Adhocs
 seed_bp = Blueprint('seed_bp', __name__, url_prefix='/seed')
 
 
-'''
-Seeds utilize only GET methods, utilize blueprint instead to
-reduce number of api.add_resource needed in server.py
-'''
+@seed_bp.route("/", methods=['PATCH'])
+def seed_database():
+    seeded_tables = []
+    seed_functions_no_auth = [seed_routes, seed_rooms, seed_types, seed_days]
+    seed_functions_auth = [seed_users]
+    seed_auth = request.json.get('password', None)
+    for seed_fn in seed_functions_no_auth:
+        try:
+            outcome = seed_fn()
+            if outcome:
+                seeded_tables.append(seed_fn.__name__.split("_")[1])
+        except Exception as e:
+            print(e)
+            return jsonify({'status': 'error', 'message': f'error seeding {seed_fn.__name__.split("_")[1]}'}), 400
+    for seed_fn in seed_functions_auth:
+        try:
+            outcome = seed_fn(seed_auth)
+            if outcome:
+                seeded_tables.append(seed_fn.__name__.split("_")[1])
+        except Exception as e:
+            print(e)
+            return jsonify({'status': 'error', 'message': f'error seeding {seed_fn.__name__.split("_")[1]}'}), 400
+    return jsonify({'status': 'ok', 'message': f'{", ".join(seeded_tables)} seeded'})
 
-
-@seed_bp.route('/roles')
+# @seed_bp.route('/roles')
 def seed_routes():
     existing_roles = [item.role for item in Roles.query.all()]
     new_roles = list()
@@ -35,22 +53,24 @@ def seed_routes():
         admin = Roles('Admin')
         new_roles.append(admin)
     if len(new_roles) == 0:
-        return jsonify({'status': 'ok', 'message': 'roles already seeded'})
+        # return jsonify({'status': 'ok', 'message': 'roles already seeded'})
+        return False
     else:
         db.session.add_all(new_roles)
         db.session.commit()
-        return jsonify({'status': 'ok', 'message': 'roles seeded'})
+        # return jsonify({'status': 'ok', 'message': 'roles seeded'})
+        return True
 
 
-@seed_bp.route('/rooms')
+# @seed_bp.route('/rooms')
 def seed_rooms():
     db.session.query(Rooms).delete()
     for i in range(1,7):
         new_room = Rooms(i)
         db.session.add(new_room)
     db.session.commit()
-    return jsonify({'status': 'ok', 'message': 'rooms seeded'})
-
+    # return jsonify({'status': 'ok', 'message': 'rooms seeded'})
+    return True
 
 @seed_bp.route('/types')
 def seed_types():
@@ -58,10 +78,10 @@ def seed_types():
     db.session.add_all([CourseTypes('FT'), CourseTypes('Flex'), CourseTypes('PT')])
     db.session.commit()
     db.session.commit()
-    return jsonify({'status': 'ok', 'message': 'course types seeded'})
+    # return jsonify({'status': 'ok', 'message': 'course types seeded'})
+    return True
 
-
-@seed_bp.route('/days')
+# @seed_bp.route('/days')
 def seed_days():
     db.session.query(DaysSchedules).delete()
     # DaysSchedules(mon,tue,wed,thu,fri,sato,sate,sun)
@@ -88,13 +108,17 @@ def seed_days():
 
     db.session.add_all([mtwt, twts, mtwtfs, mt, wt, so, se])
     db.session.commit()
-    return jsonify({'status': 'ok', 'message': 'common schedules seeded'})
+    # return jsonify({'status': 'ok', 'message': 'common schedules seeded'})
+    return True
 
-
-# Using weird methods to prevent
-@seed_bp.route("/users", methods=['PATCH'])
-def seed_users():
-    server_auth = request.json.get('password', None)
+# @seed_bp.route("/users", methods=['PATCH'])
+def seed_users(server_auth):
+    """
+    Requires 'password' to be sent in request body. 'password' should match SEED_PW in env.
+    Utilizing PATCH method to obscure access to route functions but ultimately this route should be benign, requiring
+    DB Administrator to configure access rights for the seeded users.
+    """
+    # server_auth = request.json.get('password', None)
     if server_auth is not None and server_auth == os.environ.get('SEED_PW', None):
         ph = PasswordHasher()
         pw = ph.hash('examples')
@@ -120,10 +144,11 @@ def seed_users():
         if len(users_to_add) > 0:
             db.session.add_all(users_to_add)
             db.session.commit()
-        return jsonify({'status': 'ok', 'message': 'users seeded'})
+        # return jsonify({'status': 'ok', 'message': 'users seeded'})
+        return True
     else:
-        return jsonify({'status': 'error', 'message': 'error seeding users'}), 400
-
+        # return jsonify({'status': 'error', 'message': 'error seeding users'}), 400
+        return False
 
 @seed_bp.route("/adhocs")
 def seed_adhocs():
